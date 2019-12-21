@@ -159,9 +159,9 @@ void CMessage::CreateMessageFromMatFrame(std::string topic, cv::Mat frame, int f
 
 	// Set cv::Mat specific parameters
 	_headerMap["fps"] = fps;
-	_headerMap["width"] = frame.cols;
-	_headerMap["height"] = frame.rows;
-	_headerMap["step"] = frame.step;
+	_headerMap["width"] = (int)frame.cols;
+	_headerMap["height"] = (int)frame.rows;
+	_headerMap["step"] = (int)frame.step;
 
 	// Use mat buffer to avoid cpu cost for conversion
 	std::vector<uchar> videoBuffer(frame.datastart, frame.dataend);
