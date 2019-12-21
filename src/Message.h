@@ -9,6 +9,7 @@
 #include <algorithm>
 #include "json/json.h"
 #include "defines.h"
+#include <opencv2/opencv.hpp>
 
 // Message container version
 #define MESSAGE_VERSION "1.0"
@@ -26,7 +27,7 @@ public:
 	enum MessageType
 	{
 		Unknown,
-		VideoCam,
+		OpenCVMatFrame,
 		VideoSample,
 		FaceDetection,
 		Audio,
@@ -82,6 +83,9 @@ public:
 
 	// Create a message from a buffer
 	void CreateMessageFromBuffer(std::string topic, MessageType type, std::vector<unsigned char>& buffer);
+
+	// Create a message from a cv::Mat frame
+	void CreateMessageFromMatFrame(std::string topic, cv::Mat frame, int fps);
 
 	// Deserialize buffer into message properties topic + magic marker + message type + micro seconds + data
 	void DeserializeBufferToMessage(std::vector<unsigned char>& buffer);

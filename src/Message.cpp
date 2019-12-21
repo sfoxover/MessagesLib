@@ -149,6 +149,25 @@ void CMessage::CreateMessageFromBuffer(std::string topic, MessageType type, std:
 	SetData(buffer);
 }
 
+// Create a message from a cv::Mat frame
+void CMessage::CreateMessageFromMatFrame(std::string topic, cv::Mat frame, int fps)
+{
+	// Set topic and type
+	SetTopic(topic);
+	SetType(OpenCVMatFrame);
+	SetMicroTime();
+
+	// Set cv::Mat specific parameters
+	_headerMap["fps"] = fps;
+	_headerMap["width"] = frame.cols;
+	_headerMap["height"] = frame.rows;
+	_headerMap["step"] = frame.step;
+
+	// Use mat buffer to avoid cpu cost for conversion
+	std::vector<uchar> videoBuffer(frame.datastart, frame.dataend);
+	SetData(videoBuffer);
+}
+
 // Deserialize buffer into message properties topic + magic marker + message type + micro seconds + data
 void CMessage::DeserializeBufferToMessage(std::vector<unsigned char> &buffer)
 {
