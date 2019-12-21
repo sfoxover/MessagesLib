@@ -35,6 +35,12 @@ std::wstring Helpers::Utf8ToWide(std::string value)
 	return result;
 }
 
+std::string Helpers::AppendPath(std::string path1, std::string path2)
+{
+	std::wstring filePath = std::filesystem::path(path1) /= path2;
+	return WideToUtf8(filePath);
+}
+
 std::string Helpers::AppendToRunPath(std::string path)
 {
 	char buffer[4096] = {};

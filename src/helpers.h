@@ -20,6 +20,8 @@ public:
 
 	static std::wstring Utf8ToWide(std::string value);
 
+	static std::string AppendPath(std::string path1, std::string path2);
+
 	static std::string AppendToRunPath(std::string path);
 
 	static std::vector<std::string> SplitString(std::string value, char separator);
