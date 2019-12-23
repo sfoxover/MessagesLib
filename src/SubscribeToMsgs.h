@@ -16,7 +16,7 @@ public:
 	~CSubscribeToMsgs();
 
 private:
-	// Properties
+// Properties
 
 	// Exit thread signal
 	std::unique_ptr<std::promise<void>> _stopReadThreadSignal;
@@ -32,7 +32,7 @@ public:
 // Methods
 
 	// Start streaming video from hardware camera
-	bool Start(std::string connectEndpoint, std::wstring &error);
+	bool Start(std::wstring &error);
 
 	// Stop reading video frames
 	bool Stop(std::wstring &error);

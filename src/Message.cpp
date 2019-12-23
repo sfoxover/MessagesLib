@@ -1,7 +1,6 @@
 #include "Message.h"
 #include "MessageHelper.h"
 #include <chrono>
-#include "EndianHelper.h"
 #include <cassert>
 
 CMessage::CMessage()

@@ -16,11 +16,14 @@ private:
 private:
 // Properties
 
-	// Publish endpoints
+	// Message publish endpoints
 	std::vector<std::string> _publishUris;
 
-    // Subscribe endpoints
+    // Message subscribe endpoints
 	std::vector<std::string> _subscribeUris;
+
+	// Command server endpoints
+	std::vector<std::string> _cmdServerUris;
 
     // Video settings
 	bool _useSampleVideo;
@@ -50,6 +53,7 @@ public:
     // Get access methods
     std::vector<std::string> GetPublishUris();
     std::vector<std::string> GetSubscribeUris();
+	std::vector<std::string> GetCmdServerUris();
     bool GetUseSampleVideo();
     std::string GetSampleVideoName();
     bool GetUseFaceDetect();

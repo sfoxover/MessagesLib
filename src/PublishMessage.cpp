@@ -18,6 +18,7 @@ bool CPublishMessage::Initialize(std::vector<std::string> bindEndpoints, std::ws
 		socket->bind(endPoint);
 		_contexts.push_back(context);
 		_connections.push_back(socket);
+		std::cout << "Publisher listening on " << endPoint << std::endl;
 	});
 	return true;
 }

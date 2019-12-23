@@ -17,11 +17,11 @@ bool CSettings::Initialize(std::string jsonPath, std::wstring &error)
     {
         // Load json settings values
         auto settingsMap = MessageHelper::LoadSettingsFromConfig(jsonPath);
-
+        std::vector<std::any> anyUris;
+        
         // Load publisher endpoints from json config file
         std::map<std::string, std::any> publisher;
         CASTANY(settingsMap["Publisher"], publisher);
-        std::vector<std::any> anyUris;
         CASTANY(publisher["Endpoints"], anyUris);
         _publishUris = MessageHelper::AnyArrayToStringArray(anyUris);
 
@@ -30,6 +30,12 @@ bool CSettings::Initialize(std::string jsonPath, std::wstring &error)
         CASTANY(settingsMap["Subscriber"], subscriber);
         CASTANY(subscriber["Endpoints"], anyUris);
         _subscribeUris = MessageHelper::AnyArrayToStringArray(anyUris);
+
+        // Command server endpoints
+        std::map<std::string, std::any> server;
+        CASTANY(settingsMap["CmdServer"], server);
+        CASTANY(server["Endpoints"], anyUris);
+        _cmdServerUris = MessageHelper::AnyArrayToStringArray(anyUris);
 
         // Set face detection settings
         std::map<std::string, std::any> videoSettings;
@@ -64,6 +70,11 @@ std::vector<std::string> CSettings::GetPublishUris()
 std::vector<std::string> CSettings::GetSubscribeUris()
 {
     return _subscribeUris;
+}
+
+std::vector<std::string> CSettings::GetCmdServerUris()
+{
+    return _cmdServerUris;
 }
 
 bool CSettings::GetUseSampleVideo()

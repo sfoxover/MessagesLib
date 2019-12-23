@@ -16,17 +16,8 @@ CSubscribeToMsgs::~CSubscribeToMsgs()
 }
 
 // Start reading data from publisher
-bool CSubscribeToMsgs::Start(std::string jsonConfigPath, std::wstring &error)
+bool CSubscribeToMsgs::Start(std::wstring &error)
 {
-	// Load settings object
-	bool bOK = true;
-	bOK = CSettings::Instance().Initialize(jsonConfigPath, error);
-	if(!bOK)
-	{
-		std::wcout << L"CSubscribeToMsgs settings initialize failed. Error, " << error << std::endl;
-	}
-	assert(bOK);
-
 	// zeromq subscriber object
 	auto uris = CSettings::Instance().GetSubscribeUris();
 	if(uris.size() != 1)
