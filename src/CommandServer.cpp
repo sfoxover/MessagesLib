@@ -18,19 +18,16 @@ CommandServer::~CommandServer()
 bool CommandServer::Start(std::wstring& error)
 {
 	// zeromq subscriber object
-	auto uris = CSettings::Instance().GetCmdServerUris();
-	if (uris.size() != 1)
+	auto uri = CSettings::Instance().GetCmdServerUri();
+	if (uri.empty())
 	{
-		std::wstringstream stError;
-		stError << L"Error command server config requires a single endpoint to connect to. Detected " << uris.size() << L" endpoints.";
-		error = stError.str();
-		assert(uris.size() == 1);
+		error = L"Error CmdServerEndpoint is missing from the json config file";
 		return false;
 	}
 	auto context = std::make_unique<zmq::context_t>(1);
 	auto server = std::make_unique<zmq::socket_t>(*context, ZMQ_REP);
-	server->bind(uris[0]);
-	std::cout << "Command server listening on " << uris[0] << std::endl;
+	server->bind(uri);
+	std::cout << "Command server listening on " << uri << std::endl;
 
 	_stopReadThreadSignal = std::make_unique<std::promise<void>>();
 	auto futureObj = _stopReadThreadSignal->get_future();

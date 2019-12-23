@@ -27,7 +27,7 @@ public:
 	}
 
 	// Initialize publisher and bind to endpoint e.g. "tcp://*:5563"
-	bool Initialize(std::vector<std::string> bindEndpoints, std::wstring& error);
+	bool Initialize(std::string endpoint, std::wstring& error);
 
 	// Send message packet with topic
 	bool SendMessageData(CMessage& msg, std::wstring& error);

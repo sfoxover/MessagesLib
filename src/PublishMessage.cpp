@@ -10,16 +10,15 @@ CPublishMessage::~CPublishMessage()
 }
 
 // Initialize publisher and bind to endpoint e.g. "tcp://*:5563"
-bool CPublishMessage::Initialize(std::vector<std::string> bindEndpoints, std::wstring &error)
+bool CPublishMessage::Initialize(std::string endpoint, std::wstring &error)
 {
-	std::for_each(bindEndpoints.begin(), bindEndpoints.end(), [&](auto endPoint) {
-		auto context = std::make_shared<zmq::context_t>(1);
-		auto socket = std::make_shared<zmq::socket_t>(*context, ZMQ_PUB);
-		socket->bind(endPoint);
-		_contexts.push_back(context);
-		_connections.push_back(socket);
-		std::cout << "Publisher listening on " << endPoint << std::endl;
-	});
+	auto context = std::make_shared<zmq::context_t>(1);
+	auto socket = std::make_shared<zmq::socket_t>(*context, ZMQ_PUB);
+	socket->bind(endpoint);
+	_contexts.push_back(context);
+	_connections.push_back(socket);
+	std::cout << "Publisher listening on " << endpoint << std::endl;
+
 	return true;
 }
 

@@ -19,18 +19,15 @@ CSubscribeToMsgs::~CSubscribeToMsgs()
 bool CSubscribeToMsgs::Start(std::wstring &error)
 {
 	// zeromq subscriber object
-	auto uris = CSettings::Instance().GetSubscribeUris();
-	if(uris.size() != 1)
+	auto uri = CSettings::Instance().GetSubscribeUri();
+	if(uri.empty())
 	{
-		std::wstringstream stError;
-		stError << L"Error subscription config only supports a single endpoint to connect to. Detected " << uris.size() << L" endpoints.";
-		error = stError.str();
-		assert(uris.size() == 1);
+		error = L"Error SubscriberEndpoint is missing from the json config file";
 		return false;
 	}
 	auto context = std::make_unique<zmq::context_t>(1);
 	auto subscriber = std::make_unique<zmq::socket_t>(*context, ZMQ_SUB);
-	subscriber->connect(uris[0]);
+	subscriber->connect(uri);
 
 	// Subscrible to single server
 	auto topic = CSettings::Instance().GetVideoCamTopic();

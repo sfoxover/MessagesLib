@@ -17,25 +17,18 @@ bool CSettings::Initialize(std::string jsonPath, std::wstring &error)
     {
         // Load json settings values
         auto settingsMap = MessageHelper::LoadSettingsFromConfig(jsonPath);
-        std::vector<std::any> anyUris;
         
-        // Load publisher endpoints from json config file
-        std::map<std::string, std::any> publisher;
-        CASTANY(settingsMap["Publisher"], publisher);
-        CASTANY(publisher["Endpoints"], anyUris);
-        _publishUris = MessageHelper::AnyArrayToStringArray(anyUris);
+        // Load publisher endpoint
+        CASTANY(settingsMap["PublisherEndpoint"], _publishUri);
 
         // Subscriber endpoints
-        std::map<std::string, std::any> subscriber;
-        CASTANY(settingsMap["Subscriber"], subscriber);
-        CASTANY(subscriber["Endpoints"], anyUris);
-        _subscribeUris = MessageHelper::AnyArrayToStringArray(anyUris);
+        CASTANY(settingsMap["SubscriberEndpoint"], _subscribeUri);
 
-        // Command server endpoints
-        std::map<std::string, std::any> server;
-        CASTANY(settingsMap["CmdServer"], server);
-        CASTANY(server["Endpoints"], anyUris);
-        _cmdServerUris = MessageHelper::AnyArrayToStringArray(anyUris);
+        // Command server endpoint
+        CASTANY(settingsMap["CmdServerEndpoint"], _cmdServerUri);
+
+        // Command client endpoint
+        CASTANY(settingsMap["CmdClientEndpoint"], _cmdClientUri);
 
         // Set face detection settings
         std::map<std::string, std::any> videoSettings;
@@ -62,19 +55,24 @@ bool CSettings::Initialize(std::string jsonPath, std::wstring &error)
 }
 
 // Get access methods
-std::vector<std::string> CSettings::GetPublishUris()
+std::string CSettings::GetPublishUri()
 {
-    return _publishUris;
+    return _publishUri;
 }
 
-std::vector<std::string> CSettings::GetSubscribeUris()
+std::string CSettings::GetSubscribeUri()
 {
-    return _subscribeUris;
+    return _subscribeUri;
 }
 
-std::vector<std::string> CSettings::GetCmdServerUris()
+std::string CSettings::GetCmdServerUri()
 {
-    return _cmdServerUris;
+    return _cmdServerUri;
+}
+
+std::string CSettings::GetCmdClientUri()
+{
+    return _cmdClientUri;
 }
 
 bool CSettings::GetUseSampleVideo()

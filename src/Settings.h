@@ -17,13 +17,16 @@ private:
 // Properties
 
 	// Message publish endpoints
-	std::vector<std::string> _publishUris;
+	std::string _publishUri;
 
     // Message subscribe endpoints
-	std::vector<std::string> _subscribeUris;
+	std::string _subscribeUri;
 
-	// Command server endpoints
-	std::vector<std::string> _cmdServerUris;
+	// Command server endpoint
+	std::string _cmdServerUri;
+
+	// Command server endpoint
+	std::string _cmdClientUri;
 
     // Video settings
 	bool _useSampleVideo;
@@ -51,9 +54,10 @@ public:
 	bool Initialize(std::string jsonPath, std::wstring& error);
 
     // Get access methods
-    std::vector<std::string> GetPublishUris();
-    std::vector<std::string> GetSubscribeUris();
-	std::vector<std::string> GetCmdServerUris();
+    std::string GetPublishUri();
+    std::string GetSubscribeUri();
+	std::string GetCmdServerUri();
+	std::string GetCmdClientUri();
     bool GetUseSampleVideo();
     std::string GetSampleVideoName();
     bool GetUseFaceDetect();
