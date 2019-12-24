@@ -60,7 +60,10 @@ public:
 	std::string GetCmdClientUri();
     bool GetUseSampleVideo();
     std::string GetSampleVideoName();
-    bool GetUseFaceDetect();
+    
+	// Get set for _useFaceDetect
+	bool GetUseFaceDetect();
+	void SetUseFaceDetect(bool value);
     std::string GetFaceDetectMethod();
 	std::string GetVideoCamTopic();
 	std::string GetVideoSampleTopic();

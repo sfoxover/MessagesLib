@@ -29,6 +29,14 @@ Json::Value MessageHelper::AnyValueToJson(std::any object)
         {
             value = std::any_cast<std::string>(object);
         }
+        else if (object.type() == typeid(const wchar_t*))
+        {
+            value = Helpers::WideToUtf8(std::any_cast<const wchar_t*>(object));
+        }
+        else if (object.type() == typeid(std::wstring))
+        {
+            value = Helpers::WideToUtf8(std::any_cast<std::wstring>(object));
+        }
         else if (object.type() == typeid(int64_t))
         {
             value = std::any_cast<int64_t>(object);

@@ -90,6 +90,11 @@ bool CSettings::GetUseFaceDetect()
     return _useFaceDetect;
 }
 
+void CSettings::SetUseFaceDetect(bool value)
+{
+    _useFaceDetect = value;
+}
+
 std::string CSettings::GetFaceDetectMethod()
 {
     return _faceDetectMethod;

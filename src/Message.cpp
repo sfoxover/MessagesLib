@@ -49,9 +49,14 @@ bool CMessage::operator!=(const CMessage &value)
 }
 
 // Get Set a header key value pair in _headerMap
-void CMessage::GetHeaderMapValue(std::string key, std::any &value)
+bool CMessage::GetHeaderMapValue(std::string key, std::any &value)
 {
-	value = _headerMap[key];
+	bool found = _headerMap.find(key) != _headerMap.end();
+	if (found)
+	{
+		value = _headerMap[key];
+	}
+	return found;
 }
 
 void CMessage::SetHeaderMapValue(std::string key, const std::any value)
@@ -83,16 +88,20 @@ CMessage::MessageType CMessage::GetType()
 {
 	MessageType type = MessageType::Unknown;
 	auto object = _headerMap["type"];
-	if (object.has_value() && object.type() == typeid(int16_t))
+	if (object.has_value() && object.type() == typeid(int32_t))
 	{
-		type = (MessageType)std::any_cast<int16_t>(object);
+		type = (MessageType)std::any_cast<int32_t>(object);
+	}
+	else
+	{
+		std::cerr << "CMessage::GetType unsupported std::any type: " << object.type().name() << std::endl;
 	}
 	return type;
 }
 
 void CMessage::SetType(MessageType value)
 {
-	_headerMap["type"] = (int16_t)value;
+	_headerMap["type"] = (int32_t)value;
 }
 
 // Get Set for _topic
@@ -133,7 +142,7 @@ void CMessage::CreateMessageFromJson(std::string topic, MessageType type, std::m
 	SetType(type);
 	SetMicroTime();
 
-	_headerMap["map_payload"] = items;
+	_headerMap.insert(items.begin(), items.end());
 }
 
 // Set message values including data buffer

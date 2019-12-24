@@ -59,7 +59,7 @@ public:
 	bool operator!=(const CMessage& value);
 
 	// Get Set a header key value pair in _headerMap 
-	void GetHeaderMapValue(std::string key, std::any& value);
+	bool GetHeaderMapValue(std::string key, std::any& value);
 	void SetHeaderMapValue(std::string key, const std::any value);
 
 	// Get Set for _data buffer
