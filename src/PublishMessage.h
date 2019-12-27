@@ -15,8 +15,8 @@ private:
 private:
 // Properties
 	// zeromq publisher object
-	std::vector<std::shared_ptr<zmq::socket_t>> _connections;
-	std::vector<std::shared_ptr<zmq::context_t>> _contexts;
+	std::shared_ptr<zmq::socket_t> _zeroMqSocket;
+	std::shared_ptr<zmq::context_t> _zeroMqContext;
 
 public:
 // Methods
