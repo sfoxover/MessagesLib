@@ -88,7 +88,7 @@ public:
 	void CreateMessageFromMatFrame(std::string topic, cv::Mat frame, int fps);
 
 	// Create a message from a cv::Mat frame with face detection
-	void CreateMessageFromFaceDetectedMatFrame(std::string topic, cv::Mat frame);
+	void CreateMessageFromFaceDetectedMatFrame(std::string topic, cv::Mat frame, int imagesPerSecond);
 
 	// Deserialize buffer into message properties topic + magic marker + message type + micro seconds + data
 	void DeserializeBufferToMessage(std::vector<unsigned char>& buffer);

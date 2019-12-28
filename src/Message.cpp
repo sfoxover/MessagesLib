@@ -177,7 +177,7 @@ void CMessage::CreateMessageFromMatFrame(std::string topic, cv::Mat frame, int f
 }
 
 // Create a message from a cv::Mat frame with face detection
-void CMessage::CreateMessageFromFaceDetectedMatFrame(std::string topic, cv::Mat frame)
+void CMessage::CreateMessageFromFaceDetectedMatFrame(std::string topic, cv::Mat frame, int imagesPerSecond)
 {
 	// Set topic and type
 	SetTopic(topic);
@@ -188,6 +188,7 @@ void CMessage::CreateMessageFromFaceDetectedMatFrame(std::string topic, cv::Mat 
 	_headerMap["width"] = (int)frame.cols;
 	_headerMap["height"] = (int)frame.rows;
 	_headerMap["step"] = (int)frame.step;
+	_headerMap["imagesPerSec"] = imagesPerSecond;
 
 	// Use mat buffer to avoid cpu cost for conversion
 	std::vector<uchar> videoBuffer(frame.datastart, frame.dataend);
