@@ -37,8 +37,8 @@ std::wstring Helpers::Utf8ToWide(std::string value)
 
 std::string Helpers::AppendPath(std::string path1, std::string path2)
 {
-	std::wstring filePath = std::filesystem::path(path1) /= path2;
-	return WideToUtf8(filePath);
+	std::filesystem::path filePath = std::filesystem::path(path1) /= path2;
+	return filePath.u8string();
 }
 
 std::string Helpers::AppendToRunPath(std::string path)
