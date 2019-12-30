@@ -1,11 +1,12 @@
 #include "defines.h"
 #include "SubscribeToMsgs.h"
-#include <MessageHelper.h>
+#include "MessageHelper.h"
 #include "Settings.h"
 #include <iosfwd>
 
 CSubscribeToMsgs::CSubscribeToMsgs()
 {
+	SetExitingFlag(false);
 }
 
 CSubscribeToMsgs::~CSubscribeToMsgs()
@@ -13,6 +14,21 @@ CSubscribeToMsgs::~CSubscribeToMsgs()
 	std::wstring error;
 	bool bOK = Stop(error);
 	assert(bOK);
+}
+
+// Get set for _exitingFlag
+void CSubscribeToMsgs::GetExitingFlag(bool& value)
+{
+	_exitingFlagLock.lock();
+	value = _exitingFlag;
+	_exitingFlagLock.unlock();
+}
+
+void CSubscribeToMsgs::SetExitingFlag(bool value)
+{
+	_exitingFlagLock.lock();
+	_exitingFlag = value;
+	_exitingFlagLock.unlock();
 }
 
 // Start reading data from publisher
@@ -33,20 +49,16 @@ bool CSubscribeToMsgs::Start(std::wstring &error)
 	auto topic = CSettings::Instance().GetVideoCamTopic();
 	subscriber->setsockopt(ZMQ_SUBSCRIBE, topic.c_str(), topic.size());
 
-	_stopReadThreadSignal = std::make_unique<std::promise<void>>();
-	auto futureObj = _stopReadThreadSignal->get_future();
-	_readSubThread = std::thread(&CSubscribeToMsgs::ReadThread, this, std::move(futureObj), std::move(subscriber), std::move(context));
+	_readSubThread = std::thread(&CSubscribeToMsgs::ReadThread, this, std::move(subscriber), std::move(context));
 	return true;
 }
 
 // Stop video streaming
 bool CSubscribeToMsgs::Stop(std::wstring &error)
 {
-	if(_stopReadThreadSignal)
-	{
-		_stopReadThreadSignal->set_value();
-		_stopReadThreadSignal.reset(nullptr);
-	}
+	SetExitingFlag(true);
+	_stopEvent.notify_all();
+
 	if (_readSubThread.joinable())
 		_readSubThread.join();
 
@@ -54,30 +66,32 @@ bool CSubscribeToMsgs::Stop(std::wstring &error)
 }
 
 // Message topics read thread
-void CSubscribeToMsgs::ReadThread(CSubscribeToMsgs *pThis, std::future<void> futureObj, std::unique_ptr<zmq::socket_t> subscriber, std::unique_ptr<zmq::context_t> context)
+void CSubscribeToMsgs::ReadThread(CSubscribeToMsgs *pThis, std::unique_ptr<zmq::socket_t> subscriber, std::unique_ptr<zmq::context_t> context)
 {
 	long delay = 10;
-	std::future_status waitResult;
+	bool exiting = false;
 	do
 	{
-		zmq::message_t msg;
-		auto result = subscriber->recv(msg, zmq::recv_flags::dontwait);
-		if (result.has_value() && result.value() > 0)
+		pThis->GetExitingFlag(exiting);
+		if (!exiting)
 		{
-			// Add message to queue
-			std::vector<unsigned char> buffer((const char*)msg.data(), (const char*)msg.data() + msg.size());
-			CMessage msg;
-			msg.DeserializeBufferToMessage(buffer);
-			pThis->_messageQueueLock.lock();
-			pThis->_messageQueue.push_back(msg);
-			pThis->_messageQueueLock.unlock();
-			waitResult = futureObj.wait_for(std::chrono::milliseconds(1));
+			zmq::message_t msg;
+			auto result = subscriber->recv(msg, zmq::recv_flags::dontwait);
+			if (result.has_value() && result.value() > 0)
+			{
+				// Add message to queue
+				std::vector<unsigned char> buffer((const char*)msg.data(), (const char*)msg.data() + msg.size());
+				CMessage msg;
+				msg.DeserializeBufferToMessage(buffer);
+				pThis->_messageQueueLock.lock();
+				pThis->_messageQueue.push_back(msg);
+				pThis->_messageQueueLock.unlock();
+			}
+			std::unique_lock<std::mutex> lock(pThis->_stopEventLock);
+			pThis->_stopEvent.wait_for(lock, std::chrono::milliseconds(delay));
 		}
-		else
-		{
-			waitResult = futureObj.wait_for(std::chrono::milliseconds(delay));
-		}
-	} while (waitResult == std::future_status::timeout);
+	} 
+	while (!exiting);
 }
 
 // Get all messages in queue and empty queue

@@ -3,8 +3,8 @@
 	Read video frames with ZeroMQ
 */
 #include <thread>
-#include <future>
 #include <chrono>
+#include <condition_variable>
 #include <zmq.hpp>
 #include <opencv2/opencv.hpp>
 #include "Message.h"
@@ -18,8 +18,13 @@ public:
 private:
 // Properties
 
-	// Exit thread signal
-	std::unique_ptr<std::promise<void>> _stopReadThreadSignal;
+	// Wait event will signal if exiting
+	std::condition_variable _stopEvent;
+	std::mutex _stopEventLock;
+
+	// Exit thread flag
+	bool _exitingFlag;
+	std::mutex _exitingFlagLock;
 
 	// Streaming thread
 	std::thread _readSubThread;
@@ -31,6 +36,10 @@ private:
 public:
 // Methods
 
+	// Get set for _exitingFlag
+	void GetExitingFlag(bool& value);
+	void SetExitingFlag(bool value);
+
 	// Start streaming video from hardware camera
 	bool Start(std::wstring &error);
 
@@ -38,7 +47,7 @@ public:
 	bool Stop(std::wstring &error);
 
 	// Video reading thread
-	static void ReadThread(CSubscribeToMsgs *pThis, std::future<void> futureObj, std::unique_ptr<zmq::socket_t> subscriber, std::unique_ptr<zmq::context_t> context);
+	static void ReadThread(CSubscribeToMsgs *pThis, std::unique_ptr<zmq::socket_t> subscriber, std::unique_ptr<zmq::context_t> context);
 
 	// Get all messages in queue and empty queue
 	void GetCurrentMessageQueue(std::vector<CMessage> &results);
