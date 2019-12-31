@@ -85,10 +85,10 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ZMQ_STATIC;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>..\include;..\..\JsoncppLib\src;..\..\opencv\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\JsoncppLib\src;..\..\opencv_libs\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -99,10 +99,10 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ZMQ_STATIC;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>..\include;..\..\JsoncppLib\src;..\..\opencv\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\JsoncppLib\src;..\..\opencv_libs\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -118,7 +118,7 @@
       <PreprocessorDefinitions>_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>..\include;..\..\JsoncppLib\src;..\..\opencv\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\JsoncppLib\src;..\..\opencv_libs\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,10 +133,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ZMQ_STATIC;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>..\include;..\..\JsoncppLib\src;..\..\opencv\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\JsoncppLib\src;..\..\opencv_libs\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -146,16 +146,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\zmq.h" />
     <ClInclude Include="..\include\zmq.hpp" />
     <ClInclude Include="..\include\zmq_addon.hpp" />
-    <ClInclude Include="..\include\zmq_utils.h" />
     <ClInclude Include="..\src\defines.h" />
     <ClInclude Include="..\src\helpers.h" />
     <ClInclude Include="..\src\Message.h" />
     <ClInclude Include="..\src\MessageHelper.h" />
     <ClInclude Include="..\src\MyAny.h" />
     <ClInclude Include="..\src\PublishMessage.h" />
+    <ClInclude Include="..\src\SendCommand.h" />
     <ClInclude Include="..\src\Settings.h" />
     <ClInclude Include="..\src\SubscribeToMsgs.h" />
   </ItemGroup>
@@ -165,6 +164,7 @@
     <ClCompile Include="..\src\MessageHelper.cpp" />
     <ClCompile Include="..\src\MyAny.cpp" />
     <ClCompile Include="..\src\PublishMessage.cpp" />
+    <ClCompile Include="..\src\SendCommand.cpp" />
     <ClCompile Include="..\src\Settings.cpp" />
     <ClCompile Include="..\src\SubscribeToMsgs.cpp" />
   </ItemGroup>
