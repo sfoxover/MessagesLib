@@ -20,6 +20,8 @@ const unsigned char MESSAGE_MARKER_START[] = { 0xD1, 0xFF, 0xD2, 0xFE };
 // Message header end marker sequence
 const unsigned char MESSAGE_MARKER_END[] = { 0xD1, 0xFF, 0xD3, 0xFA };
 
+class MessageFactory;
+
 class CMessage
 {
 public:
@@ -32,13 +34,14 @@ public:
 		Audio,
 		MotionSensor,
 		ServerCommand,
+		ProfilingData,
 		Other
 	};
 
 	CMessage();
 	~CMessage();
 
-private:
+protected:
 // Properties
 
 	// A map of any types that gets converted to and from json
@@ -78,18 +81,6 @@ public:
 	void GetMicroTimeStamp(int64_t& value);
 	void SetMicroTimeStamp(int64_t value);
 
-	// Create a message from key value json pairs
-	void CreateMessageFromJson(std::string topic, MessageType type, std::map<std::string, std::any> items);
-
-	// Create a message from a buffer
-	void CreateMessageFromBuffer(std::string topic, MessageType type, std::vector<unsigned char>& buffer);
-
-	// Create a message from a cv::Mat frame
-	void CreateMessageFromMatFrame(std::string topic, cv::Mat frame, int fps);
-
-	// Create a message from a cv::Mat frame with face detection
-	void CreateMessageFromFaceDetectedMatFrame(std::string topic, cv::Mat frame, int imagesPerSecond);
-
 	// Deserialize buffer into message properties topic + magic marker + message type + micro seconds + data
 	void DeserializeBufferToMessage(std::vector<unsigned char>& buffer);
 
@@ -98,4 +89,6 @@ public:
 
 	// Convert header map to json
 	static void SerializeHeaderMapToJson(const std::map<std::string, std::any> map, Json::Value& json);
+
+	friend class MessageFactory;
 };

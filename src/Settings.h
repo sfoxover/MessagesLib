@@ -40,7 +40,8 @@ private:
 	std::string _VideoCamTopic;
 	std::string _VideoSampleTopic;
 	std::string _FaceDetectTopic;
-	std::string _MotionSensor;
+	std::string _MotionSensorTopic;
+	std::string _ProfilingTopic;
 
 public:
 // Methods
@@ -69,4 +70,5 @@ public:
 	std::string GetVideoSampleTopic();
 	std::string GetFaceDetectTopic();
 	std::string GetMotionSensorTopic();
+	std::string GetProfilingTopic();
 };

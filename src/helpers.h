@@ -25,4 +25,6 @@ public:
 	static std::string AppendToRunPath(std::string path);
 
 	static std::vector<std::string> SplitString(std::string value, char separator);
+
+	static double GetProcessCpuUsage();
 };

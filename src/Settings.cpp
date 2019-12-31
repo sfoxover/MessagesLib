@@ -42,7 +42,8 @@ bool CSettings::Initialize(std::string jsonPath, std::wstring &error)
         CASTANY(settingsMap["VideoCamTopic"], _VideoCamTopic);
         CASTANY(settingsMap["VideoSampleTopic"], _VideoSampleTopic);
         CASTANY(settingsMap["FaceDetectTopic"], _FaceDetectTopic);
-        CASTANY(settingsMap["MotionSensorTopic"], _MotionSensor);
+        CASTANY(settingsMap["MotionSensorTopic"], _MotionSensorTopic);
+        CASTANY(settingsMap["ProfilingTopic"], _ProfilingTopic);
 
         return true;
     }
@@ -117,5 +118,10 @@ std::string CSettings::GetFaceDetectTopic()
 
 std::string CSettings::GetMotionSensorTopic()
 {
-    return _MotionSensor;
+    return _MotionSensorTopic;
+}
+
+std::string CSettings::GetProfilingTopic()
+{
+    return _ProfilingTopic;
 }

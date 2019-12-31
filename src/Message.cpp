@@ -134,67 +134,6 @@ void CMessage::SetMicroTimeStamp(int64_t value)
 	_headerMap["time_stamp"] = value;
 }
 
-// Create message from key value pairs
-void CMessage::CreateMessageFromJson(std::string topic, MessageType type, std::map<std::string, std::any> items)
-{
-	// Set topic and type
-	SetTopic(topic);
-	SetType(type);
-	SetMicroTime();
-
-	_headerMap.insert(items.begin(), items.end());
-}
-
-// Set message values including data buffer
-void CMessage::CreateMessageFromBuffer(std::string topic, MessageType type, std::vector<unsigned char> &buffer)
-{
-	// Set topic and type
-	SetTopic(topic);
-	SetType(type);
-	SetMicroTime();
-
-	// Copy to buffer
-	SetData(buffer);
-}
-
-// Create a message from a cv::Mat frame
-void CMessage::CreateMessageFromMatFrame(std::string topic, cv::Mat frame, int fps)
-{
-	// Set topic and type
-	SetTopic(topic);
-	SetType(OpenCVMatFrame);
-	SetMicroTime();
-
-	// Set cv::Mat specific parameters
-	_headerMap["fps"] = fps;
-	_headerMap["width"] = (int)frame.cols;
-	_headerMap["height"] = (int)frame.rows;
-	_headerMap["step"] = (int)frame.step;
-
-	// Use mat buffer to avoid cpu cost for conversion
-	std::vector<uchar> videoBuffer(frame.datastart, frame.dataend);
-	SetData(videoBuffer);
-}
-
-// Create a message from a cv::Mat frame with face detection
-void CMessage::CreateMessageFromFaceDetectedMatFrame(std::string topic, cv::Mat frame, int imagesPerSecond)
-{
-	// Set topic and type
-	SetTopic(topic);
-	SetType(FaceDetection);
-	SetMicroTime();
-
-	// Set cv::Mat specific parameters
-	_headerMap["width"] = (int)frame.cols;
-	_headerMap["height"] = (int)frame.rows;
-	_headerMap["step"] = (int)frame.step;
-	_headerMap["imagesPerSec"] = imagesPerSecond;
-
-	// Use mat buffer to avoid cpu cost for conversion
-	std::vector<uchar> videoBuffer(frame.datastart, frame.dataend);
-	SetData(videoBuffer);
-}
-
 // Deserialize buffer into message properties topic + magic marker + message type + micro seconds + data
 void CMessage::DeserializeBufferToMessage(std::vector<unsigned char> &buffer)
 {

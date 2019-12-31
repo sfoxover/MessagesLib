@@ -21,6 +21,14 @@ Json::Value MessageHelper::AnyValueToJson(std::any object)
         {
             value = std::any_cast<int>(object);
         }
+        else if (object.type() == typeid(double))
+        {
+            value = std::any_cast<double>(object);
+        }
+        else if (object.type() == typeid(float))
+        {
+            value = std::any_cast<float>(object);
+        }
         else if (object.type() == typeid(const char *))
         {
             value = std::any_cast<const char *>(object);

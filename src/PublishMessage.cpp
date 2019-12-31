@@ -29,7 +29,7 @@ bool CPublishMessage::SendMessageData(CMessage &msg, std::wstring &error)
 
 	// Check we are connected
 	bool bOK = true;
-	if (!_zeroMqSocket->connected())
+	if (!_zeroMqSocket || !_zeroMqSocket->connected())
 	{
 		bOK = false;
 		error = L"Send message failed, publisher is disconnected.";
