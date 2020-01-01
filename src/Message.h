@@ -68,6 +68,7 @@ public:
 	// Get Set for _data buffer
 	void GetData(std::vector<unsigned char>& value);
 	void SetData(std::vector<unsigned char>& value, bool move=true);
+	int32_t GetDataSize();
 
 	// Get Set for _type
 	MessageType GetType();

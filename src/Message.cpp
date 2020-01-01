@@ -83,6 +83,11 @@ void CMessage::SetData(std::vector<unsigned char> &value, bool move)
 	}
 }
 
+int32_t CMessage::GetDataSize()
+{
+	return _data.size();
+}
+
 // Get Set for _type
 CMessage::MessageType CMessage::GetType()
 {
