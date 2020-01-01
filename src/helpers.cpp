@@ -1,6 +1,10 @@
 #include "helpers.h"
 #ifdef _WIN32
 	#include "windows.h"
+	#include <atlbase.h>
+	#include <comdef.h>
+	#include <Wbemidl.h>
+	#pragma comment(lib, "wbemuuid.lib")
 #else
 	#include <unistd.h>
 #endif
@@ -9,6 +13,7 @@
 #include <iostream>
 #include <cassert>
 #include <thread>
+
 using namespace std::chrono_literals;
 
 bool Helpers::FileExists(std::wstring path)
@@ -86,8 +91,7 @@ std::vector<std::string> Helpers::SplitString(std::string value, char delimiter)
 // Get CPU usage for current process
 double Helpers::GetProcessCpuUsage()
 {
-#ifdef _WIN32
-	
+#ifdef _WIN32	
 	SYSTEM_INFO sysInfo;
 	GetSystemInfo(&sysInfo);
 	int numProcessors = sysInfo.dwNumberOfProcessors;
@@ -114,11 +118,17 @@ double Helpers::GetProcessCpuUsage()
 	memcpy(&sys, &fsys, sizeof(FILETIME));
 	memcpy(&user, &fuser, sizeof(FILETIME));
 	double percent = (sys.QuadPart - lastSysCPU.QuadPart) + (user.QuadPart - lastUserCPU.QuadPart);
-	percent /= (now.QuadPart - lastCPU.QuadPart);
-	percent /= numProcessors;
-
-	return percent * 100;
-
+	auto diff = now.QuadPart - lastCPU.QuadPart;
+	if (diff != 0 && numProcessors != 0)
+	{
+		percent /= (now.QuadPart - lastCPU.QuadPart);
+		percent /= numProcessors;
+		return percent * 100;
+	}
+	else
+	{
+		return 0;
+	}
 #else
 	FILE* file;
 	struct tms timeSample;
@@ -159,4 +169,60 @@ double Helpers::GetProcessCpuUsage()
 	return percent;
 
 #endif
+}
+
+// Get CPU Temperature
+double Helpers::GetCpuTemperature()
+{
+	double result = 0;
+#ifdef _WIN32
+	HRESULT ci = CoInitialize(NULL);
+	if (SUCCEEDED(ci))
+	{
+		HRESULT hr = CoInitializeSecurity(NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_DEFAULT, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE, NULL);
+		CComPtr<IWbemLocator> pLocator;
+		hr = CoCreateInstance(CLSID_WbemAdministrativeLocator, NULL, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID*)&pLocator);
+		if (SUCCEEDED(hr))
+		{
+			CComPtr<IWbemServices> pServices;
+			CComBSTR ns = L"root\\cimv2";
+			hr = pLocator->ConnectServer(ns, NULL, NULL, NULL, 0, NULL, NULL, &pServices);
+			if (SUCCEEDED(hr))
+			{
+				CComBSTR query = L"SELECT * FROM Win32_PerfFormattedData_Counters_ThermalZoneInformation";
+				CComBSTR wql = L"WQL";
+				CComPtr<IEnumWbemClassObject> pEnum;
+				hr = pServices->ExecQuery(wql, query, WBEM_FLAG_RETURN_IMMEDIATELY, NULL, &pEnum);
+				if (SUCCEEDED(hr))
+				{
+					hr = pEnum->Reset();
+					do
+					{
+						CComPtr<IWbemClassObject> pObject;
+						ULONG returned = 0;
+						hr = pEnum->Next(WBEM_INFINITE, 1, &pObject, &returned);
+						if (hr == S_OK)
+						{
+							CComVariant value;
+							HRESULT hrFound = pObject->Get(L"Temperature", 0, &value, NULL, NULL);
+							if (SUCCEEDED(hrFound))
+							{
+								result = value.intVal * 9 / 5 - 459.67;
+								break;
+							}
+						}
+					} while (hr == S_OK);
+				}
+			}
+			
+		}
+	}
+	if (ci == S_OK)
+	{
+		CoUninitialize();
+	}
+#else
+
+#endif
+	return result;
 }
