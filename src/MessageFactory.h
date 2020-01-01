@@ -17,11 +17,11 @@ class MessageFactory
 {
 public:
 	// Create message from key value pairs
-	static CMessage Create(std::string topic, CMessage::MessageType type, std::map<std::string, std::any> items);
+	static CMessage Create(std::string topic, int32_t type, std::map<std::string, std::any> items);
 
 	// Create message from data buffer
-	static CMessage Create(std::string topic, CMessage::MessageType type, std::vector<unsigned char>& buffer);
+	static CMessage Create(std::string topic, int32_t type, std::vector<unsigned char>& buffer);
 
 	// Create a message from a cv::Mat frame
-	static CMessage Create(std::string topic, CMessage::MessageType type, cv::Mat frame, int fps=-1);
+	static CMessage Create(std::string topic, int32_t type, cv::Mat frame, int fps=-1);
 };

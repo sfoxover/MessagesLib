@@ -89,9 +89,9 @@ int32_t CMessage::GetDataSize()
 }
 
 // Get Set for _type
-CMessage::MessageType CMessage::GetType()
+int32_t CMessage::GetType()
 {
-	MessageType type = MessageType::Unknown;
+	int type = 0;
 	auto object = _headerMap["type"];
 	if (object.has_value() && object.type() == typeid(int32_t))
 	{
@@ -104,7 +104,7 @@ CMessage::MessageType CMessage::GetType()
 	return type;
 }
 
-void CMessage::SetType(MessageType value)
+void CMessage::SetType(int32_t value)
 {
 	_headerMap["type"] = (int32_t)value;
 }

@@ -1,7 +1,7 @@
 #include "MessageFactory.h"
 
 // Create message from key value pairs
-CMessage MessageFactory::Create(std::string topic, CMessage::MessageType type, std::map<std::string, std::any> items)
+CMessage MessageFactory::Create(std::string topic, int32_t type, std::map<std::string, std::any> items)
 {
 	CMessage msg;
 
@@ -15,7 +15,7 @@ CMessage MessageFactory::Create(std::string topic, CMessage::MessageType type, s
 }
 
 // Set message values including data buffer
-CMessage MessageFactory::Create(std::string topic, CMessage::MessageType type, std::vector<unsigned char>& buffer)
+CMessage MessageFactory::Create(std::string topic, int type, std::vector<unsigned char>& buffer)
 {
 	CMessage msg;
 
@@ -30,7 +30,7 @@ CMessage MessageFactory::Create(std::string topic, CMessage::MessageType type, s
 }
 
 // Create a message from a cv::Mat frame
-CMessage MessageFactory::Create(std::string topic, CMessage::MessageType type, cv::Mat frame, int fps)
+CMessage MessageFactory::Create(std::string topic, int32_t type, cv::Mat frame, int fps)
 {
 	CMessage msg;
 

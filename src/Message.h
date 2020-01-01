@@ -28,14 +28,16 @@ public:
 	// Suported message types
 	enum MessageType
 	{
-		Unknown,
-		OpenCVMatFrame,
-		FaceDetection,
-		Audio,
-		MotionSensor,
-		ServerCommand,
-		ProfilingData,
-		Other
+		Unknown = 0,
+		OpenCVMatFrame = 1,
+		JpegFrame = 1 << 1,
+		FaceDetection = 1 << 2,
+		Video = 1 << 3,
+		Audio = 1 << 4,
+		MotionSensor = 1 << 5,
+		ServerCommand = 1 << 6,
+		ProfilingData = 1 << 7,
+		Other = 1 << 8
 	};
 
 	CMessage();
@@ -71,8 +73,8 @@ public:
 	int32_t GetDataSize();
 
 	// Get Set for _type
-	MessageType GetType();
-	void SetType(MessageType value);
+	int32_t GetType();
+	void SetType(int32_t value);
 
 	// Get Set for _topic
 	void GetTopic(std::string& value);
