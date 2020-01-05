@@ -26,7 +26,5 @@ public:
 
 	static std::vector<std::string> SplitString(std::string value, char separator);
 
-	static double GetProcessCpuUsage();
-
 	static double GetCpuTemperature();
 };

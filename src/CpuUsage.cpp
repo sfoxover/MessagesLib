@@ -66,7 +66,8 @@ double GetProcessCpuUsageWin32()
 #ifndef _WIN32	
 double GetProcessCpuUsageLinux()
 {
-
+	auto id = ::getpid();
+	/*
     FILE *in;
     char buff[512];
     if(!(in = popen("ps -C codeblocks -o %cpu,%mem | tail -n 2", "r"))){
@@ -74,7 +75,7 @@ double GetProcessCpuUsageLinux()
     }
     while(fgets(buff, sizeof(buff), in)!=NULL)
     {
-        cout << buff;
+        std::cout << buff;
     }
     pclose(in);
 
@@ -117,6 +118,8 @@ double GetProcessCpuUsageLinux()
 	lastUserCPU = timeSample.tms_utime;
 
 	return percent;
+	*/
+	return 0;
 }
 #endif
 
