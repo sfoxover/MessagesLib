@@ -18,6 +18,8 @@
 	#include <linux/times.h>
 #endif
 
+using namespace std::chrono_literals;
+
 #ifdef _WIN32	
 double GetProcessCpuUsageWin32()
 {
