@@ -13,15 +13,18 @@
 	#include <atlbase.h>
 	#include <comdef.h>
 #else
+	#include <iterator>
 	#include <unistd.h>	
 	#include <linux/types.h>
 	#include <linux/times.h>
 #endif
+#include <cassert>
 
 using namespace std::chrono_literals;
 
 #ifdef _WIN32	
-double GetProcessCpuUsageWin32()
+
+double CCpuUsage::GetProcessCpuUsageWin32()
 {
     SYSTEM_INFO sysInfo;
 	GetSystemInfo(&sysInfo);
@@ -64,61 +67,67 @@ double GetProcessCpuUsageWin32()
 #endif
 
 #ifndef _WIN32	
-double GetProcessCpuUsageLinux()
+
+// System uptime in seconds
+double CCpuUsage::GetUptime()
 {
-	auto id = ::getpid();
-	/*
-    FILE *in;
-    char buff[512];
-    if(!(in = popen("ps -C codeblocks -o %cpu,%mem | tail -n 2", "r"))){
-        return 1;
-    }
-    while(fgets(buff, sizeof(buff), in)!=NULL)
-    {
-        std::cout << buff;
-    }
-    pclose(in);
-
-
-    std::ifstream fileStat("/proc/stat");
-
-    FILE* file;
-	struct tms timeSample;
-	char line[128];
-
-	long lastCPU = times(&timeSample);
-	long lastSysCPU = timeSample.tms_stime;
-	long lastUserCPU = timeSample.tms_utime;
-
-	file = fopen("/proc/cpuinfo", "r");
-	int numProcessors = 0;
-	while (fgets(line, 128, file) != NULL) {
-		if (strncmp(line, "processor", 9) == 0) numProcessors++;
-	}
-	fclose(file);
-
-	struct tms timeSample;
-	clock_t now;
-	double percent;
-
-	now = times(&timeSample);
-	if (now <= lastCPU || timeSample.tms_stime < lastSysCPU || timeSample.tms_utime < lastUserCPU) 
+	double result = 0;
+	std::ifstream fs("/proc/uptime");
+	std::vector<std::string> results(std::istream_iterator<std::string>{fs}, std::istream_iterator<std::string>());
+	if (!results.empty())
 	{
-		//Overflow detection. Just skip this value.
-		percent = -1.0;
+		result = std::atof(results[0].c_str());
 	}
-	else {
-		percent = (timeSample.tms_stime - lastSysCPU) + (timeSample.tms_utime - lastUserCPU);
-		percent /= (now - lastCPU);
-		percent /= numProcessors;
-		percent *= 100;
-	}
-	lastCPU = now;
-	lastSysCPU = timeSample.tms_stime;
-	lastUserCPU = timeSample.tms_utime;
+	return result;
+}
 
-	return percent;
-	*/
+// Get cpu time for process
+double CCpuUsage::GetCpuTime(std::string cpuPath)
+{
+	std::ifstream fs(cpuPath);
+	std::vector<std::string> results(std::istream_iterator<std::string>{fs}, std::istream_iterator<std::string>());
+	if(results.size() > 21)
+	{
+		// #14 CPU time spent in user code, measured in clock ticks
+		double utime = std::atof(results[13].c_str());
+
+		// #15 CPU time spent in kernel code, measured in clock ticks
+		double stime = std::atof(results[14].c_str());
+
+		// #16 Waited - for children's CPU time spent in user code (in clock ticks)
+		double cutime = std::atof(results[15].c_str());
+
+		// #17 Waited for children's CPU time spent in kernel code (in clock ticks)
+		double cstime = std::atof(results[16].c_str());
+
+		double pidTotalTime = utime + stime + cutime + cstime;
+		return pidTotalTime;		
+	}
+	return 0;
+}
+
+double CCpuUsage::GetProcessCpuUsageLinux()
+{
+	auto pid = ::getpid();	
+	std::stringstream buffer;
+	buffer << "/proc/" << pid << "/stat";
+	std::string pidStat = buffer.str();
+
+	auto cpuUage1 = GetCpuTime(pidStat);
+
+	// Pause for 100 ms
+	std::this_thread::sleep_for(100ms);
+
+	auto cpuUage2 = GetCpuTime(pidStat);
+
+	long hertz = sysconf(_SC_CLK_TCK);
+	assert(hertz > 0);
+	if (hertz > 0)
+	{
+		float result = (cpuUage2 - cpuUage1) / 100 * 100.0;
+		return result;
+	}
+
 	return 0;
 }
 #endif
@@ -127,8 +136,10 @@ double GetProcessCpuUsageLinux()
 double CCpuUsage::GetProcessCpuUsage()
 {
 #ifdef _WIN32	
-    return GetProcessCpuUsageWin32();
+	CCpuUsage cpu;
+    return cpu.GetProcessCpuUsageWin32();
 #else
-    return GetProcessCpuUsageLinux();
+	CCpuUsage cpu;
+    return cpu.GetProcessCpuUsageLinux();
 #endif
 }
