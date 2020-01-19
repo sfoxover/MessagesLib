@@ -146,7 +146,13 @@ double GetCpuTemperatureLinux()
 {
 	double result = 0;
 #ifndef _WIN32
-
+	std::ifstream fs("/sys/class/thermal/thermal_zone0/temp");
+	std::stringstream buffer;
+	buffer << fs.rdbuf();
+	if (!buffer.str().empty())
+	{
+		result = std::atof(buffer.str().c_str()) / 1000;
+	}
 #endif // _WIN32
 	return result;
 }
