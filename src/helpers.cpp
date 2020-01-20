@@ -89,7 +89,7 @@ std::vector<std::string> Helpers::SplitString(std::string value, char delimiter)
 }
 
 // Get CPU Temperature
-double Helpers::GetCpuTemperature()
+double GetCpuTemperatureWin32()
 {
 	double result = 0;
 #ifdef _WIN32
@@ -131,15 +131,33 @@ double Helpers::GetCpuTemperature()
 					} while (hr == S_OK);
 				}
 			}
-			
+
 		}
 	}
 	if (ci == S_OK)
 	{
 		CoUninitialize();
 	}
-#else
+#endif // _WIN32
+	return result;
+}
 
+double GetCpuTemperatureLinux()
+{
+	double result = 0;
+#ifndef _WIN32
+
+#endif // _WIN32
+	return result;
+}
+
+double Helpers::GetCpuTemperature()
+{
+	double result = 0;
+#ifdef _WIN32
+	result = GetCpuTemperatureWin32();
+#else
+	result = GetCpuTemperatureLinux();
 #endif
 	return result;
 }
