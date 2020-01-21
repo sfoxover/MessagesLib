@@ -21,11 +21,8 @@ public:
 	// Get cpu usage % for process
 	double GetProcessCpuUsageLinux();
 
-	// System uptime in seconds
-	double GetUptime();
-
 	// Get cpu time for process
-	double GetCpuTime(std::string cpuPath);
+	void GetCpuTime(double& work, double& total);
 
 #else
 	// Get cpu usage % for process

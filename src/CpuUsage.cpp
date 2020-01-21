@@ -68,71 +68,49 @@ double CCpuUsage::GetProcessCpuUsageWin32()
 
 #ifndef _WIN32	
 
-// System uptime in seconds
-double CCpuUsage::GetUptime()
+// Get cpu time 
+void CCpuUsage::GetCpuTime(double& workJif, double& totalJif)
 {
-	double result = 0;
-	std::ifstream fs("/proc/uptime");
+	std::ifstream fs("/proc/stat");
 	std::vector<std::string> results(std::istream_iterator<std::string>{fs}, std::istream_iterator<std::string>());
-	if (!results.empty())
+	if(results.size() >= 8)
 	{
-		result = std::atof(results[0].c_str());
+		workJif = 0;
+		for (int n = 1; n < 4; n++)
+			workJif += std::atof(results[n].c_str());
+
+		totalJif = workJif;
+		for(int n=4; n < 8; n++)
+			totalJif += std::atof(results[n].c_str());
 	}
-	return result;
-}
-
-// Get cpu time for process
-double CCpuUsage::GetCpuTime(std::string cpuPath)
-{
-	std::ifstream fs(cpuPath);
-	std::vector<std::string> results(std::istream_iterator<std::string>{fs}, std::istream_iterator<std::string>());
-	if(results.size() > 21)
-	{
-		// #14 CPU time spent in user code, measured in clock ticks
-		double utime = std::atof(results[13].c_str());
-
-		// #15 CPU time spent in kernel code, measured in clock ticks
-		double stime = std::atof(results[14].c_str());
-
-		// #16 Waited - for children's CPU time spent in user code (in clock ticks)
-		double cutime = std::atof(results[15].c_str());
-
-		// #17 Waited for children's CPU time spent in kernel code (in clock ticks)
-		double cstime = std::atof(results[16].c_str());
-
-		double pidTotalTime = utime + stime + cutime + cstime;
-		return pidTotalTime;		
-	}
-	return 0;
 }
 
 double CCpuUsage::GetProcessCpuUsageLinux()
 {
-	auto pid = ::getpid();	
 	std::stringstream buffer;
-	buffer << "/proc/" << pid << "/stat";
-	std::string pidStat = buffer.str();
+	buffer << "/proc/stat";
 
-	auto cpuUage1 = GetCpuTime(pidStat);
+	double workJif1, totalJif1 = 0;
+	GetCpuTime(workJif1, totalJif1);
 
 	// Pause for 100 ms
 	std::this_thread::sleep_for(100ms);
 
-	auto cpuUage2 = GetCpuTime(pidStat);
+	double workJif2, totalJif2 = 0;
+	GetCpuTime(workJif2, totalJif2);
 
-	long hertz = sysconf(_SC_CLK_TCK);
-	assert(hertz > 0);
-	if (hertz > 0)
+	double work = workJif2 - workJif1;
+	double total = totalJif2 - totalJif1;
+	if (total > 0)
 	{
-		float result = (cpuUage2 - cpuUage1) / 100 * 100.0;
-		return result;
+		double cpu = work / total * 100;
+		return cpu;
 	}
-
 	return 0;
 }
 #endif
 
-// Get CPU usage for current process
+// Get CPU usage for all cores on system with 100% max usage
 double CCpuUsage::GetProcessCpuUsage()
 {
 #ifdef _WIN32	
