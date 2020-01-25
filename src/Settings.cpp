@@ -81,6 +81,11 @@ bool CSettings::GetUseSampleVideo()
     return _useSampleVideo;
 }
 
+void CSettings::SetUseSampleVideo(bool value)
+{
+    _useSampleVideo = value;
+}
+
 std::string CSettings::GetSampleVideoName()
 {
     return _sampleVideoName;

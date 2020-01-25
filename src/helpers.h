@@ -27,4 +27,6 @@ public:
 	static std::vector<std::string> SplitString(std::string value, char separator);
 
 	static double GetCpuTemperature();
+
+	static bool StringEqualsIgnoreCase(std::string value1, std::string value2);
 };

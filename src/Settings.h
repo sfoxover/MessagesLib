@@ -59,7 +59,10 @@ public:
     std::string GetSubscribeUri();
 	std::string GetCmdServerUri();
 	std::string GetCmdClientUri();
+
+	// Get set use video sample file
     bool GetUseSampleVideo();
+	void SetUseSampleVideo(bool value);
     std::string GetSampleVideoName();
     
 	// Get set for _useFaceDetect
