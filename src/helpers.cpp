@@ -170,8 +170,9 @@ double Helpers::GetCpuTemperature()
 
 bool Helpers::StringEqualsIgnoreCase(std::string value1, std::string value2)
 {
-	std::equal(value1.begin(), value1.end(), value2.begin(), [](char& c1, char& c2)
+	bool equal = std::equal(value1.begin(), value1.end(), value2.begin(), [](char& c1, char& c2)
 	{
 		return (c1 == c2 || std::toupper(c1) == std::toupper(c2)); 
 	});
+	return equal;
 }

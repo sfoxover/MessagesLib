@@ -14,6 +14,7 @@ bool CPublishMessage::Initialize(std::string endpoint, std::wstring &error)
 {
 	_zeroMqContext = std::make_shared<zmq::context_t>(1);
 	_zeroMqSocket = std::make_shared<zmq::socket_t>(*_zeroMqContext, ZMQ_PUB);
+	_zeroMqSocket->setsockopt(ZMQ_SNDHWM, MAX_PUB_MSG_QUEUE);
 	_zeroMqSocket->bind(endpoint);
 	std::cout << "Publisher listening on " << endpoint << std::endl;
 
