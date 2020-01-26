@@ -21,6 +21,3 @@ endif()
 target_link_libraries(${HELPER_LIB_NAME} libzmq-static)
 target_link_libraries(${HELPER_LIB_NAME} JsonCppLib)
 target_include_directories(${HELPER_LIB_NAME} PUBLIC src PUBLIC include PUBLIC include/rapidjson)
-
-install(TARGETS ${HELPER_LIB_NAME} DESTINATION lib)
-install(FILES ${LIB_HEADERS} DESTINATION include)
