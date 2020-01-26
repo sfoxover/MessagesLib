@@ -7,4 +7,4 @@
 #define MAX_TOPIC_LENGTH 255
 
 // Max publisher messages allowed to queue up before being dropped
-#define MAX_PUB_MSG_QUEUE 30
+#define MAX_PUB_MSG_QUEUE 10
